@@ -1,0 +1,240 @@
+cluster:
+  name: vultr-test-cluster
+  namespace: fleet-default
+  kubernetesVersion: v1.31.9+rke2r1
+
+  rkeConfig:
+    additionalManifest: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: vultr-ccm
+        namespace: kube-system
+      type: Opaque
+      stringData:
+        api-key: yourapikey
+      ---
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: vultr-ccm
+        namespace: kube-system
+      ---
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        annotations:
+          rbac.authorization.kubernetes.io/autoupdate: "true"
+        name: system:vultr-ccm
+      rules:
+        - apiGroups:
+            - ""
+          resources:
+            - events
+          verbs:
+            - create
+            - patch
+            - update
+        - apiGroups:
+            - ""
+          resources:
+            - nodes
+          verbs:
+            - '*'
+        - apiGroups:
+            - ""
+          resources:
+            - nodes/status
+          verbs:
+            - patch
+        - apiGroups:
+            - ""
+          resources:
+            - services
+          verbs:
+            - list
+            - patch
+            - update
+            - watch
+        - apiGroups:
+            - ""
+          resources:
+            - services/status
+          verbs:
+            - list
+            - patch
+            - update
+            - watch
+        - apiGroups:
+            - ""
+          resources:
+            - serviceaccounts
+          verbs:
+            - create
+            - get
+        - apiGroups:
+            - ""
+          resources:
+            - persistentvolumes
+          verbs:
+            - get
+            - list
+            - update
+            - watch
+        - apiGroups:
+            - ""
+          resources:
+            - endpoints
+          verbs:
+            - create
+            - get
+            - list
+            - watch
+            - update
+        - apiGroups:
+            - coordination.k8s.io
+          resources:
+            - leases
+          verbs:
+            - create
+            - get
+            - list
+            - watch
+            - update
+        - apiGroups:
+            - ""
+          resources:
+            - secrets
+          verbs:
+            - get
+            - list
+            - watch
+      ---
+      kind: ClusterRoleBinding
+      apiVersion: rbac.authorization.k8s.io/v1
+      metadata:
+        name: system:vultr-ccm
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: system:vultr-ccm
+      subjects:
+        - kind: ServiceAccount
+          name: vultr-ccm
+          namespace: kube-system
+      ---
+      apiVersion: apps/v1
+      kind: DaemonSet
+      metadata:
+        name: vultr-ccm
+        labels:
+          app: vultr-ccm
+        namespace: kube-system
+      spec:
+        selector:
+          matchLabels:
+            app: vultr-ccm
+        template:
+          metadata:
+            labels:
+              app: vultr-ccm
+          spec:
+            serviceAccountName: vultr-ccm
+            tolerations:
+              - key: "CriticalAddonsOnly"
+                operator: "Exists"
+              - operator: "Exists"
+                effect: "NoExecute"
+              - operator: "Exists"
+                effect: "NoSchedule"
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: node-role.kubernetes.io/control-plane
+                          operator: Exists
+            hostNetwork: true
+            containers:
+              - image: vultr/vultr-cloud-controller-manager:v0.14.0
+                imagePullPolicy: Always
+                name: vultr-cloud-controller-manager
+                command:
+                  - "/vultr-cloud-controller-manager"
+                  - "--cloud-provider=vultr"
+                  - "--allow-untagged-cloud=true"
+                  - "--authentication-skip-lookup=true"
+                  - "--v=3"
+                env:
+                  - name: VULTR_API_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: vultr-ccm
+                        key: api-key
+
+    etcd:
+      disableSnapshots: false
+      snapshotRetention: 5
+      snapshotScheduleCron: 0 */5 * * *
+
+    machineGlobalConfig:
+      cni: calico
+      disable-kube-proxy: false
+      etcd-expose-metrics: false
+
+    machinePools:
+      - name: pool1-controlplane
+        etcdRole: false
+        controlPlaneRole: true
+        workerRole: false
+        quantity: 1
+        labels: {}
+        providerConfig:
+          apiKey: ''
+          region: ewr
+          vpsPlan: vc2-2c-4gb
+          osId: "1743"
+          enableVpc: true
+          vpcIds: []
+          disableUfw: true
+          cloudInitFromFile: true
+
+
+      - name: pool2-etcd
+        etcdRole: true
+        controlPlaneRole: false
+        workerRole: false
+        quantity: 1
+        labels: {}
+        providerConfig:
+          apiKey: ''
+          region: ewr
+          vpsPlan: vc2-2c-4gb
+          osId: "1743"
+          enableVpc: true
+          vpcIds: []
+          disableUfw: true
+          cloudInitFromFile: true
+
+      - name: pool3-worker
+        etcdRole: false
+        controlPlaneRole: false
+        workerRole: true
+        quantity: 1
+        labels: {}
+        providerConfig:
+          apiKey: ''
+          region: ewr
+          vpsPlan: vc2-2c-4gb
+          osId: "1743"
+          enableVpc: true
+          vpcIds: []
+          disableUfw: true
+          cloudInitFromFile: true
+
+    machineSelectorConfig:
+      - config:
+          cloud-provider-name: external
+          protect-kernel-defaults: false
+
+

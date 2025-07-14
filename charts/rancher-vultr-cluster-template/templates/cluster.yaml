@@ -1,0 +1,26 @@
+apiVersion: provisioning.cattle.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: {{ .Values.cluster.namespace }}
+spec:
+{{- if .Values.cluster.cloudCredentialSecretName }}
+  cloudCredentialSecretName: {{ .Values.cluster.cloudCredentialSecretName | quote }}
+{{- end }}
+  kubernetesVersion: {{ .Values.cluster.kubernetesVersion }}
+  rkeConfig:
+    machinePools:
+    {{- range .Values.cluster.rkeConfig.machinePools }}
+    - name: {{ .name }}
+      controlPlaneRole: {{ .controlPlaneRole | default false }}
+      etcdRole: {{ .etcdRole | default false }}
+      workerRole: {{ .workerRole | default false }}
+      quantity: {{ .quantity }}
+      machineConfigRef:
+        kind: VultrConfig
+        name: {{ .name }}
+      paused: false
+      displayName: {{ .name }}
+    {{- end }}
+    machineGlobalConfig:
+{{ toYaml .Values.cluster.rkeConfig.machineGlobalConfig | indent 6 }}

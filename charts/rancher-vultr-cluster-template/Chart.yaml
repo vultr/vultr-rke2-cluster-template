@@ -1,0 +1,8 @@
+apiVersion: v1
+name: vultr-rke2-cluster-template
+description: RKE2 Cluster template for Vultr
+version: 0.0.1
+icon: https://helm-charts.ewr1.vultrobjects.com/icons/vultr.svg
+annotations:
+  catalog.cattle.io/type: cluster-template
+  catalog.cattle.io/namespace: fleet-default

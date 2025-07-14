@@ -1,0 +1,9 @@
+{{- range .Values.cluster.rkeConfig.machinePools }}
+apiVersion: rke-machine-config.cattle.io/v1
+kind: VultrConfig
+metadata:
+  name: {{ .name }}
+  namespace: fleet-default
+{{ toYaml .providerConfig | indent 0 }}
+---
+{{- end }}
