@@ -72,7 +72,7 @@
 
       <h2>Usage</h2>
 
-      <pre class="snippet" lang="no-highlight"><code>helm repo add rancher-cluster-templates https://mondragonfx.github.io/rancher-cluster-templates</code></pre>
+      <pre class="snippet" lang="no-highlight"><code>helm repo add rancher-cluster-templates https://vultr.github.io/rancher-cluster-templates</code></pre>
 
       <p>This repository contains RKE2 Cluster template Helm charts that are used for demonstration purposes.</p>
 
