@@ -1,0 +1,1 @@
+# vultr-rke2-cluster-template
