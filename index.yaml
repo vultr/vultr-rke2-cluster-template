@@ -5,6 +5,18 @@ entries:
       catalog.cattle.io/namespace: fleet-default
       catalog.cattle.io/type: cluster-template
     apiVersion: v1
+    created: "2025-07-15T15:06:56.649054628Z"
+    description: RKE2 Cluster template for Vultr
+    digest: 359dd15fed0a81c8e599d3097abf7da8b2ce88d4381d08a8751906cb67c454b7
+    icon: https://helm-charts.ewr1.vultrobjects.com/icons/vultr.svg
+    name: vultr-rke2-cluster-template
+    urls:
+    - https://github.com/vultr/vultr-rke2-cluster-template/releases/download/vultr-rke2-cluster-template-0.0.2/vultr-rke2-cluster-template-0.0.2.tgz
+    version: 0.0.2
+  - annotations:
+      catalog.cattle.io/namespace: fleet-default
+      catalog.cattle.io/type: cluster-template
+    apiVersion: v1
     created: "2025-07-15T14:33:35.954396029Z"
     description: RKE2 Cluster template for Vultr
     digest: 6f5ca5151d4eec4178da623516f57449984b44c9cc2bdab6776b2d233b2c5f0f
@@ -13,4 +25,4 @@ entries:
     urls:
     - https://github.com/vultr/vultr-rke2-cluster-template/releases/download/vultr-rke2-cluster-template-0.0.1/vultr-rke2-cluster-template-0.0.1.tgz
     version: 0.0.1
-generated: "2025-07-15T14:33:35.95440218Z"
+generated: "2025-07-15T15:06:56.649062212Z"
