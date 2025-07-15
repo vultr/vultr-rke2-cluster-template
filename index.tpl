@@ -74,9 +74,9 @@
 
       <pre class="snippet" lang="no-highlight"><code>helm repo add vultr-cluster-template https://vultr.github.io/vultr-rke2-cluster-template</code></pre>
 
-      <p>This repository contains RKE2 Cluster template Helm charts that are used for demonstration purposes.</p>
+      <p>This repository contains RKE2 Cluster template Helm charts to deploy Vultr RKE2 clusters via Rancher.</p>
 
-      <p><b>The Helm charts in this repository are not production ready and are meant for demonstration purposes only!</b>
+      <p><b>The Helm charts in this repository are not production ready</b>
 
       <h2>Charts</h2>
 
