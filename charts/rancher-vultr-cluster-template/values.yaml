@@ -199,7 +199,6 @@ cluster:
           disableUfw: true
           cloudInitFromFile: true
 
-
       - name: pool2-etcd
         etcdRole: true
         controlPlaneRole: false
@@ -236,5 +235,3 @@ cluster:
       - config:
           cloud-provider-name: external
           protect-kernel-defaults: false
-
-
